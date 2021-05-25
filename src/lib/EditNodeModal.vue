@@ -10,6 +10,7 @@
         <VSelect v-model="newNode.type" placeholder="Select type">
           <option value="class" selected>Class</option>
           <option value="interface">Interface</option>
+
         </VSelect>
         <br/>
 
