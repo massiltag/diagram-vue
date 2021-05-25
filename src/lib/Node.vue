@@ -74,16 +74,18 @@
       @mouseup="mouseup"
       @touchend="mouseup"
     />
+
+
     <rect
       v-else
       class="grab"
       :x="x"
       :y="y"
       :width="node.width"
-      :height="node.height"
+      :height="calculateTotalHeight()"
       rx="5"
       ry="3"
-      :fill="content.color || '#ecf0f1'"
+      :fill="content.color || '#b1a4a4'"
       :stroke-width="node.strokeWeight"
       :stroke="node.stroke"
       @touchstart="mousedown"
@@ -93,7 +95,43 @@
       @mouseup="mouseup"
       @touchend="mouseup"
     />
-    <a target="_blank" :href="content.url">
+    <text :x="x + node.width + 7" :y="y + 11"
+          v-if="editable"
+          class="unselectable"
+          @touchstart="mousedown"
+          @mousedown="mousedown"
+          @mousemove="mousemove"
+          @touchmove="mousemove"
+          @mouseup="mouseup"
+          @touchend="mouseup">
+      ☸
+    </text>
+    <line :x1="x" :y1="y + 30" :x2="x + node.width" :y2="y + 30" class="uml-class-separator"/>
+    <foreignObject style="border:none" :x="x" :y="y" :width="node.width" :height="node.height">
+      <body>
+      <form>
+        <input :value="content.text" disabled type="text"/>
+      </form>
+      </body>
+    </foreignObject>
+    <foreignObject style ="border:none" :x="x" :y="y + 25" :width="node.width" :height="node.height">
+      <body>
+      <form>
+        <input type="text"/>
+      </form>
+      </body>
+    </foreignObject>
+    <line :x1="x" :y1="y + 80" :x2="x + node.width" :y2="y + 80" class="uml-class-separator"/>
+    <foreignObject style ="border:none" :x="x" :y="y + 75" :width="node.width" :height="node.height">
+      <body>
+      <form>
+        <input type="text"/>
+      </form>
+      </body>
+    </foreignObject>
+
+
+    <!--a target="_blank" :href="content.url">
       <text
         :x="x + node.width / 2"
         :y="y + node.height / 2"
@@ -104,9 +142,77 @@
       >
         {{ content.text }}
       </text>
-    </a>
+    </a-->
   </g>
 </template>
+
+
+<!-- MINE -->
+<style scoped>
+
+.unselectable {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+
+.uml-class-border {
+  fill:white;
+  stroke:black;
+  stroke-width:3px;
+  fill-opacity:0.1;
+  stroke-opacity:0.9;
+}
+.uml-class-title {
+  font-size: 12px;
+  display: block;
+  margin: auto;
+}
+.uml-class-separator {
+  stroke: black;
+  stroke-width: 1px;
+}
+/* The popup form - hidden by default */
+.form-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+/* Full-width input fields */
+.form-container input[type=text], .form-container input[type=password] {
+  width: 100%;
+  padding: 10px;
+  margin-left:-50px;
+  margin-right:50px;
+  border: none;
+  background: #f1f1f1;
+}
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+input {
+  border: none;
+  height: 15px!important;
+  width: 90%;
+  display: block;
+  margin: auto;
+  z-index: -300;
+}
+input::before {
+  content: "+";
+}
+
+</style>
+
 <script>
 import mouseLocation from "../mouseLocation";
 export default {
@@ -173,6 +279,7 @@ export default {
       this.$emit("remove", this.id);
     },
     copy() {
+      console.log(this.node.height);
       this.$emit("copy", this.node);
     },
     mousedown(e) {
@@ -220,6 +327,11 @@ export default {
         stroke: this.node.stroke,
         strokeWeight: this.node.strokeWeight
       });
+    },
+
+    // MINE
+    calculateTotalHeight() {
+      return 130;
     }
   }
 };
