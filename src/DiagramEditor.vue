@@ -152,7 +152,9 @@ export default {
           text: "",
           url: "",
           color: ""
-        }
+        },
+        attributes: [],
+        methods: []
       },
       tmpLink: {
         id: "",
@@ -189,6 +191,8 @@ export default {
       this.isSettingsModalActive = false;
     },
     addNode(item) {
+      if (!item.attributes) item.attributes = [];
+      if (!item.methods) item.methods = [];
       this.graphData.nodes.push({
         id: this.generateID(),
         content: {
@@ -204,7 +208,9 @@ export default {
         point: {
           x: 10,
           y: 100 + Math.random() * 100
-        }
+        },
+        attributes: item.attributes,
+        methods: item.methods
       });
       this.isModalActive = false;
     },
@@ -218,6 +224,8 @@ export default {
       this.tmpNode.strokeWeight = item.strokeWeight;
       this.tmpNode.width = item.width;
       this.tmpNode.height = item.height;
+      this.tmpNode.attributes = item.attributes;
+      this.tmpNode.methods = item.methods;
       this.isModalActive = false;
       this.isEditModalActive = true;
     },
@@ -231,6 +239,8 @@ export default {
       tmp.strokeWeight = item.strokeWeight;
       tmp.width = parseInt(item.width);
       tmp.height = parseInt(item.height);
+      tmp.attributes = item.attributes;
+      tmp.methods = item.methods;
       this.isEditModalActive = false;
     },
     openLinkEdit(item) {
