@@ -48,7 +48,7 @@ export default {
   visibility: hidden;
   opacity: 1;
   z-index: -9999;
-  top: 25vh;
+  top: 10vh;
   left: 15vw;
   &.is-open {
     z-index: 9999;
