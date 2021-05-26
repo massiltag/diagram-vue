@@ -107,25 +107,27 @@
       ☸
     </text>
     <line :x1="x" :y1="y + 30" :x2="x + node.width" :y2="y + 30" class="uml-class-separator"/>
-    <foreignObject style="border:none" :x="x" :y="y" :width="node.width" :height="node.height">
+    <foreignObject style="border:none" :x="x" :y="y" :width="node.width" :height="30">
       <body>
       <form>
-        <input :value="content.text" disabled type="text"/>
+        <input :value="content.text" disabled type="text" />
       </form>
       </body>
     </foreignObject>
-    <foreignObject style ="border:none" :x="x" :y="y + 25" :width="node.width" :height="node.height">
+    <foreignObject style="border:none" :x="x" :y="y + 25" :width="node.width" :height="nbAttribs * 17 + 10">
       <body>
-      <form>
-        <input type="text"/>
+      <form> <!-- TODO input x2, separate name & type + link them with v-model. this is only temp. -->
+        <input v-for="attrib in node.attributes" type="text" :value="attrib.name + ' : ' + attrib.type" />
       </form>
       </body>
     </foreignObject>
-    <line :x1="x" :y1="y + 80" :x2="x + node.width" :y2="y + 80" class="uml-class-separator"/>
-    <foreignObject style ="border:none" :x="x" :y="y + 75" :width="node.width" :height="node.height">
+    <line :x1="x" :y1="y + nbAttribs * 17 + 45" :x2="x + node.width" :y2="y + nbAttribs * 17 + 45"
+          class="uml-class-separator" />
+    <foreignObject style="border:none" :x="x" :y="y + nbAttribs * 17 + 47" :width="node.width"
+                   :height="nbMethods * 17 + 10">
       <body>
       <form>
-        <input type="text"/>
+        <input v-for="meth in node.methods" type="text" :value="meth.name + '() : ' + meth.type" />
       </form>
       </body>
     </foreignObject>
@@ -201,11 +203,11 @@
 }
 input {
   border: none;
-  height: 15px!important;
+  height: 15px !important;
   width: 90%;
   display: block;
   margin: auto;
-  z-index: -300;
+  z-index: -170;
 }
 input::before {
   content: "+";
@@ -247,7 +249,9 @@ export default {
     labels: Object,
     scale: String,
     rWidth: Number,
-    rHeight: Number
+    rHeight: Number,
+
+    lineHeight: 17
   },
   watch: {
     node() {
@@ -265,7 +269,10 @@ export default {
       id: this.node.id,
       x: this.node.point.x,
       y: this.node.point.y,
-      content: this.node.content
+      content: this.node.content,
+
+      nbAttribs: Number,
+      nbMethods: Number
     };
   },
   methods: {
@@ -331,7 +338,14 @@ export default {
 
     // MINE
     calculateTotalHeight() {
-      return 130;
+      let nbAttribs = 0, nbMethods = 0;
+
+      if (this.node.attributes) nbAttribs = this.node.attributes.length;
+      if (this.node.methods) nbMethods = this.node.methods.length;
+      this.nbAttribs = nbAttribs;
+      this.nbMethods = nbMethods;
+
+      return 70 + nbAttribs * 17 + nbMethods * 17;
     }
   }
 };
