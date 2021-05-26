@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h2>diagram-vue</h2>
+    <h2><code>diagram-vue</code> for UML diagramming</h2>
     <section>
       <span>Demo:</span>
       <VSelect v-model="demo">
