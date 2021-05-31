@@ -16,21 +16,56 @@
           <option value="dash">Dash</option>
           <option value="dot">Dot</option> </VSelect
         ><br />
-        <label>Arrow type:</label>
-        <VSelect v-model="newLink.arrow" placeholder="Select arrow type">
-          <option value="none">none</option>
-          <option value="src">One side(source)</option>
-          <option value="dest">One side(destination)</option>
-          <option value="both">Both side</option> </VSelect
+           <label>Arrow type: </label>
+          <VSelect v-model="newLink.arrow" placeholder="Select arrow type">
+          <option value="association">Association</option>
+          <option value="directS">Direct association (source)</option>
+          <option value="directD">Direct association (destination)</option>
+          <option value="reflexive">Reflexive association</option> 
+          <option value="Aggregation">Aggregation</option> 
+          <option value="Composition">Composition</option> 
+          <option value="Inheritance">Inheritance</option>    
+          </VSelect
         ><br />
+            <label>left cardinality : </label>
+          <VInput v-model="cardinalityLeft" placeholder="Select left cardinality"  type="text" v-on:change="isCardinalityLeftValid">
+             <span v-show="cardErr" style="color:red">{{cardinalityError}}</span>
+        </VInput>
+          <br />
+            <label>right cardinality : </label>
+          <VInput v-model="cardinalityRight" placeholder="Select right cardinality"  type="text">
+            <span v-show="cardErr" style="color:red">{{cardinalityError}}</span>
+          </VInput
+        ><br />
+
+        <label>Navigability :</label>
+        <VSelect v-model="newLink.Navigability" placeholder="">
+          <option value="solid" selected>Navigable right</option>
+          <option value="dash">Navigable left</option></VSelect
+        ><br />
+
         <VButton @click="ok">OK</VButton>
         <VButton class="danger" @click="cancel">Cancel</VButton>
       </div>
     </transition>
   </VModal>
 </template>
-<script>
+<script type="text/javascript">
+import VCkbox from '../minimal-ui/lib/VCkbox.vue';
+
+const cardinalityReg = /^(([^<>()[]\.,;:\s@"]+(.[^<>()[]\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
+
 export default {
+  components: { VCkbox },
+    data: function () {
+      return {
+    cardinalityLeft: '',
+    cardinalityRight: '',
+    cardinalityError:' Invalid cardinality',
+    cardErr:false
+    }
+    
+  },
   props: {
     isActive: Boolean,
     link: {
@@ -63,15 +98,36 @@ export default {
           color: this.newLink.color,
           shape: this.newLink.shape,
           pattern: this.newLink.pattern,
-          arrow: this.newLink.arrow
+          arrow: this.newLink.arrow,
+
         }
       });
     },
     cancel() {
       this.$emit("cancel");
-    }
+    },
+    isCardinalityLeftValid: function() {
+    let arrayCardLeft = this.cardinalityLeft.split("..");
+    console.log("isCardValid");
+  	if (this.cardinalityLeft == '' || cardinalityReg.test(this.cardinalityLeft)){
+      this.cardErr = true;
+          console.log("isCardValid 2");
+      }
+      else 
+        if(arrayCardLeft.length == 2 && arrayCardLeft[1] != "*" && parseInt(arrayCardLeft[0]) <= parseInt(arrayCardLeft[1])){
+        this.cardErr = true;
+
+                  console.log("isCardValid 3");
+    } else {
+      this.cardErr = false;
+                console.log("isCardValid 4");
+      }
+  	}
   }
 };
+
+
+
 </script>
 <style lang="scss" scoped>
 input {
