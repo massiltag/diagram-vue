@@ -27,17 +27,16 @@
           <option value="Inheritance">Inheritance</option>    
           </VSelect
         ><br />
-            <label>left cardinality : </label>
-          <VInput v-model="cardinalityLeft" placeholder="Select left cardinality"  type="text" v-on:change="isCardinalityLeftValid">
-             <span v-show="cardErr" style="color:red">{{cardinalityError}}</span>
-        </VInput>
+            <label>Left cardinality : </label>
+          <VInput v-model="cardinalityLeft" placeholder="Select left cardinality"  type="text" @input ="isCardinalityLeftValid">  
+          </VInput>
+             <span v-show="cardErrLeft" style="color:red">{{cardinalityError}}</span>
           <br />
-            <label>right cardinality : </label>
-          <VInput v-model="cardinalityRight" placeholder="Select right cardinality"  type="text">
-            <span v-show="cardErr" style="color:red">{{cardinalityError}}</span>
-          </VInput
-        ><br />
-
+           <label>Right cardinality : </label>
+          <VInput v-model="cardinalityRight" placeholder="Select right cardinality"  type="text" @input ="isCardinalityRightValid">
+           </VInput>
+           <span v-show="cardErrRight" style="color:red">{{cardinalityError}}</span>
+           <br/>
         <label>Navigability :</label>
         <VSelect v-model="newLink.Navigability" placeholder="">
           <option value="solid" selected>Navigable right</option>
@@ -51,20 +50,18 @@
   </VModal>
 </template>
 <script type="text/javascript">
-import VCkbox from '../minimal-ui/lib/VCkbox.vue';
 
-const cardinalityReg = /^(([^<>()[]\.,;:\s@"]+(.[^<>()[]\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))$/;
+const cardinalityReg = /^(0|([1-9][0-9]*))..(([1-9][0-9]*)|"*")$/;
 
 export default {
-  components: { VCkbox },
-    data: function () {
-      return {
-    cardinalityLeft: '',
-    cardinalityRight: '',
-    cardinalityError:' Invalid cardinality',
-    cardErr:false
+   data() {
+    return {
+      cardinalityLeft : "",
+      cardinalityRight : "",
+      cardinalityError : " Cardinality must be : number..number (first number <= second number) or  number..*  ",
+      cardErrLeft:false,
+      cardErrRight:false
     }
-    
   },
   props: {
     isActive: Boolean,
@@ -106,21 +103,20 @@ export default {
     cancel() {
       this.$emit("cancel");
     },
-    isCardinalityLeftValid: function() {
+    isCardinalityLeftValid() {
     let arrayCardLeft = this.cardinalityLeft.split("..");
-    console.log("isCardValid");
-  	if (this.cardinalityLeft == '' || cardinalityReg.test(this.cardinalityLeft)){
-      this.cardErr = true;
-          console.log("isCardValid 2");
+  	if (cardinalityReg.test(this.cardinalityLeft) && arrayCardLeft.length == 2 && (arrayCardLeft[1] != "*" && parseInt(arrayCardLeft[0]) <= parseInt(arrayCardLeft[1])) || arrayCardLeft[1] == "*"){
+          this.cardErrLeft = false;
+     } else {
+      this.cardErrLeft = true;
       }
-      else 
-        if(arrayCardLeft.length == 2 && arrayCardLeft[1] != "*" && parseInt(arrayCardLeft[0]) <= parseInt(arrayCardLeft[1])){
-        this.cardErr = true;
-
-                  console.log("isCardValid 3");
-    } else {
-      this.cardErr = false;
-                console.log("isCardValid 4");
+  	},
+    isCardinalityRightValid() {
+    let arrayCardRight = this.cardinalityRight.split("..");
+  	if (cardinalityReg.test(this.cardinalityRight) && arrayCardRight.length == 2 && (arrayCardRight[1] != "*" && parseInt(arrayCardRight[0]) <= parseInt(arrayCardRight[1])) || arrayCardRight[1] == "*"){
+          this.cardErrRight = false;
+     } else {
+      this.cardErrRight = true;
       }
   	}
   }
