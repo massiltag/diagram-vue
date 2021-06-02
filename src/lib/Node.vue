@@ -117,7 +117,7 @@
     <foreignObject style="border:none" :x="x" :y="y + 25" :width="node.width" :height="nbAttribs * 17 + 10">
       <body>
       <form> <!-- TODO input x2, separate name & type + link them with v-model. this is only temp. -->
-        <input v-for="attrib in node.attributes" type="text" :value="attrib.name + ' : ' + attrib.type" />
+        <input v-for="attrib in node.attributes" type="text" :value="attrib.name + ' : ' + attrib.type" :key="attrib" />
       </form>
       </body>
     </foreignObject>
@@ -127,7 +127,7 @@
                    :height="nbMethods * 17 + 10">
       <body>
       <form>
-        <input v-for="meth in node.methods" type="text" :value="meth.name + '() : ' + meth.type" />
+        <input v-for="meth in node.methods" type="text" :value="meth.name + '() : ' + meth.type" :key="meth.name" />
       </form>
       </body>
     </foreignObject>
@@ -250,8 +250,7 @@ export default {
     scale: String,
     rWidth: Number,
     rHeight: Number,
-
-    lineHeight: 17
+    lineHeight: 17,
   },
   watch: {
     node() {

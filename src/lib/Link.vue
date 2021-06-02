@@ -11,11 +11,8 @@
       stroke-width="3"
       fill="none"
       :stroke-dasharray="definePattern(link.pattern)"
-      :marker-start="
-        link.arrow === 'src' || link.arrow === 'both' ? `url(#${link.id})` : ''
-      "
       :marker-end="
-        link.arrow === 'dest' || link.arrow === 'both' ? `url(#${link.id})` : ''
+        link.arrow !== 'association'  ? `url(#${link.id})` : ''
       "
     />
     <line
@@ -28,11 +25,8 @@
       stroke-width="3"
       fill="none"
       :stroke-dasharray="definePattern(link.pattern)"
-      :marker-start="
-        link.arrow === 'src' || link.arrow === 'both' ? `url(#${link.id})` : ''
-      "
       :marker-end="
-        link.arrow === 'dest' || link.arrow === 'both' ? `url(#${link.id})` : ''
+        link.arrow !== 'association'  ? `url(#${link.id})` : ''
       "
     />
     <marker
@@ -43,10 +37,11 @@
       markerHeight="15"
       viewBox="0 0 10 10"
       refX="5"
-      refY="5"
-    >
-      <polygon points="0,1.5 0,8.5 10,5 " :fill="link.color || '#ffeaa7'" />
-    </marker>
+      refY="5"  >
+      <polygon v-if ="link.arrow !== 'Composition' && link.arrow != 'Aggregation'" points="0,1.5 0,8.5 10,5 " :fill="link.arrow === 'Inheritance'? '#eeeeee' : (link.color || '#ffeaa7')" :stroke = "link.color || '#ffeaa7'" />
+     <polygon  v-if ="link.arrow === 'Composition'"  points="6,9 1,6 5,2 9,5 " :stroke="link.color || '#ffeaa7'" :fill="link.color || '#ffeaa7'" stroke-width="1"/> 
+      <polygon  v-if ="link.arrow === 'Aggregation'"  points="6,9 1,6 5,2 9,5 " :stroke="link.color || '#ffeaa7'" :fill="'#eeeeee'" stroke-width="1"/> 
+      </marker>
     <g v-if="editable">
       <line
         :x1="calcSource().x"
@@ -158,7 +153,7 @@ export default {
         y: 0
       },
       id: this.link.id,
-      point: this.link.point
+      point: this.link.point,
     };
   },
   methods: {

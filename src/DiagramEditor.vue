@@ -254,6 +254,8 @@ export default {
       tmp.shape = item.content.shape;
       tmp.pattern = item.content.pattern;
       tmp.arrow = item.content.arrow;
+      tmp.cardinalityLeft = item.content.cardinalityLeft,
+      tmp.cardinalityRight = item.content.cardinalityRight,
       this.isEditLinkModalActive = false;
     },
     endEdit() {

@@ -22,11 +22,11 @@
               <th>Type</th>
               <th>Actions</th>
             </tr>
-            <tr v-for="a in attributeList">
+            <tr v-for="a in attributeList" :key="a.name">
               <td><input type="text" v-model="a.name"></td>
               <td>
                 <VSelect v-model="a.type" placeholder="Select type">
-                  <option v-for="t in attributeTypes" :value="t">{{ t }}</option>
+                  <option v-for="t in attributeTypes" :value="t" :key="t">{{ t }}</option>
                 </VSelect>
               </td>
               <td><VButton @click="deleteAttribute(a.name)">delete</VButton></td>
@@ -45,15 +45,15 @@
               <th>Actions</th>
               <th>Add parameter</th>
             </tr>
-            <tr v-for="a in methodList">
+            <tr v-for="a in methodList" :key="a.name">
               <td><input type="text" v-model="a.name"></td>
               <td>
                 <VSelect v-model="a.type" placeholder="Select type">
-                  <option v-for="t in attributeTypes" :value="t">{{ t }}</option>
+                  <option v-for="t in attributeTypes" :value="t" :key="t">{{ t }}</option>
                 </VSelect>
               </td>
               <td width="180">
-                <span style="font-size: 15px" v-for="p in a.params">{{ p.name }}: {{ p.type }}, </span>
+                <span style="font-size: 15px" v-for="p in a.params" :key="p.name">{{ p.name }}: {{ p.type }}, </span>
               </td>
               <td>
                 <VButton @click="deleteMethod(a.name)">delete</VButton>
