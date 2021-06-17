@@ -39,7 +39,7 @@
       refX="5"
       refY="5"  >
       <polygon v-if ="link.arrow !== 'Composition' && link.arrow != 'Aggregation'" points="0,1.5 0,8.5 10,5 " :fill="link.arrow === 'Inheritance'? '#eeeeee' : (link.color || '#ffeaa7')" :stroke = "link.color || '#ffeaa7'" />
-     <polygon  v-if ="link.arrow === 'Composition'"  points="6,9 1,6 5,2 9,5 " :stroke="link.color || '#ffeaa7'" :fill="link.color || '#ffeaa7'" stroke-width="1"/> 
+      <polygon  v-if ="link.arrow === 'Composition'"  points="6,9 1,6 5,2 9,5 " :stroke="link.color || '#ffeaa7'" :fill="link.color || '#ffeaa7'" stroke-width="1"/> 
       <polygon  v-if ="link.arrow === 'Aggregation'"  points="6,9 1,6 5,2 9,5 " :stroke="link.color || '#ffeaa7'" :fill="'#eeeeee'" stroke-width="1"/> 
       </marker>
     <g v-if="editable">
@@ -95,6 +95,22 @@
         class="button"
       >
         {{ labels.remove || "Remove" }}
+      </text>
+      <text
+        v-if ="link.cardinalityLeft && link.cardinalityLeft!= null"
+        :x="calcSource().x-calculXPoS()"
+        :y="calcSource().y+calculYPoS()"
+        fill="black"
+      >
+      {{ link.cardinalityLeft }}
+      </text>
+      <text
+        v-if ="link.cardinalityRight && link.cardinalityRight!= null"
+        :x="calcDestination().x-calculXPoD()"
+        :y="calcDestination().y-calculYPoD()"
+        fill="black"
+      >
+      {{ link.cardinalityRight }}
       </text>
     </g>
   </g>
@@ -152,6 +168,7 @@ export default {
         x: 0,
         y: 0
       },
+      po:0,
       id: this.link.id,
       point: this.link.point,
     };
@@ -281,6 +298,18 @@ export default {
           };
         }
       }
+    },
+    calculXPoD(){
+     return this.calcSource().x < this.calcDestination().x ? 30 : 0;
+    },
+    calculXPoS(){
+     return this.calcSource().x > this.calcDestination().x ? 30 : 0;
+    },
+    calculYPoD(){
+     return this.calcSource().y < this.calcDestination().y ? 30 : 0;
+    },
+    calculYPoS(){
+     return this.calcSource().y > this.calcDestination().y ? 30 : 0;
     }
   }
 };
