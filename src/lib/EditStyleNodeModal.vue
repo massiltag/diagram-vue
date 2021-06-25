@@ -1,41 +1,45 @@
 <template>
-  <div v-if="isActive" @clickModal="cancel" >
+  <div v-if="isActive" @clickModal="cancel" style="margin-bottom:20px;"  >
     <transition name="item">
-      <div class="form" v-if="isActive">
-        <h2>{newNode.content.text}</h2>
-        <div class="styling">
-          <h2>Styling</h2>
-          <VInput v-model="newNode.content.color" placeholder="color" style="text-align:center"/><br />
+      <div class="form " v-if="isActive" style="margin-top:20px;">
+        <h2>Styling class: {{newNode.content.text}}</h2>
+        <div class="styling" style=" margin:30px 20px 0px 20px;;">
+          <label> <b>Background-color : </b></label>
+          <VInput v-model="newNode.content.color" placeholder="color" style="text-align:center"/><br /> <br>
+          <label> <b>Width: </b></label>
           <VInput
             type="number"
             v-model="newNode.width"
             placeholder="width"
             style="text-align:center"
-          /><br />
+          /><br /><br>
+          <label> <b>Height: </b></label>
           <VInput
             type="number"
             v-model="newNode.height"
             placeholder="height"
             style="text-align:center"
-          /><br />
+          /><br /><br>
+          <label> <b>Stroke: </b></label>
           <VInput
             type="text"
             v-model="newNode.stroke"
             placeholder="stroke"
             style="text-align:center"
-          /><br />
+          /><br /><br>
+          <label> <b>Stroke weight: </b></label>
           <VInput
             type="number"
             v-model="newNode.strokeWeight"
             placeholder="stroke weight"
             style="text-align:center"
           /><br />
-          <VSelect v-model="newNode.shape" placeholder="Select shape">
+          <VSelect v-model="newNode.shape" placeholder="Select shape" style="margin-top:10px;">
             <option value="rectangle" selected>Rectangle</option>
             <option value="ellipse">Ellipse</option> </VSelect
           ><br />
         </div>
-        <VButton @click="ok">OK</VButton>
+        <VButton @click="ok" style="margin-top:20px; margin-right:10px;">OK</VButton>
         <VButton class="danger" @click="cancel">Cancel</VButton>
       </div>
     </transition>
@@ -179,5 +183,8 @@ export default {
 
   .inline {
     display: inline;
+  }
+  label{
+    color:gray;
   }
 </style>

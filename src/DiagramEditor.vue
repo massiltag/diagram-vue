@@ -85,7 +85,7 @@
      <EditStyleNodeModal
       :node="tmpNode"
       :isActive="isEditStyleModalActive"
-      @ok="editNode"
+      @ok="editStyleNode"
       @cancel="cancel"
     />
     <InputModal
@@ -111,12 +111,14 @@ import EditLinkModal from "@/lib/EditLinkModal";
 import InputModal from "@/lib/InputModal";
 import AskModal from "@/lib/AskModal";
 import SettingsModal from "@/lib/SettingsModal";
+import EditStyleNodeModal from "@/lib/EditStyleNodeModal";
 export default {
   name: "DiagramEditor",
   components: {
     Diagram,
     EditNodeModal,
     EditLinkModal,
+    EditStyleNodeModal,
     InputModal,
     AskModal,
     SettingsModal
@@ -246,6 +248,7 @@ export default {
       this.isAskClearDiagram = false;
       this.isSettingsModalActive = false;
       this.isEditEmptyModalActive = false;
+      this.isEditStyleModalActive = false;
     },
     addNode(item) {
       if (!item.attributes) item.attributes = [];
@@ -297,7 +300,6 @@ export default {
       this.isEditStyleModalActive = false;
     },
     openNodeEditStyle(item){
-      console.log("hello");
        this.tmpNode.id = item.id;
       this.tmpNode.content.text = item.content.text;
       this.tmpNode.content.url = item.content.url;
@@ -335,6 +337,16 @@ export default {
       tmp.attributes = item.attributes;
       tmp.methods = item.methods;
       this.isEditModalActive = false;
+    },
+    editStyleNode(item){
+      let tmp = this.graphData.nodes.find(x => x.id === item.id);
+      tmp.content.color = item.content.color;
+      tmp.shape = item.shape;
+      tmp.stroke = item.stroke;
+      tmp.strokeWeight = item.strokeWeight;
+      tmp.width = parseInt(item.width);
+      tmp.height = parseInt(item.height);
+      this.isEditStyleModalActive = false;
     },
     openLinkEdit(item) {
       this.tmpLink.id = item.id;
