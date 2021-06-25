@@ -1,15 +1,8 @@
 <template>
   <div id="app">
-    <h2><code>diagram-vue</code> for UML diagramming</h2>
-    <section>
-      <span>Demo:</span>
-      <VSelect v-model="demo">
-        <option value="default">Default Editor</option>
-      </VSelect>
-    </section>
-    <br />
-    <section v-if="demo === 'default'">
-      <DiagramEditor v-model="graph"></DiagramEditor>
+    <h2 style="text-align:center;">Modelizer <code> UML diagramming</code></h2>
+    <section >
+      <DiagramEditor v-model="graph" style="margin:50px 0px 50px 0px;"></DiagramEditor>
     </section>
   </div>
 </template>

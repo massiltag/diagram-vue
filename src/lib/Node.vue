@@ -1,22 +1,47 @@
 <template>
   <g>
     <g v-if="editable">
+      <rect
+      v-if="selected"
+      class="grab"
+      :x="x+node.width+10"
+      :y="y+10"
+      :width="90"
+      :height="120"
+      rx="3"
+      fill="#FFFFFF"
+      stroke-width="0.5"
+      stroke="gray"
+    />
       <text
         v-if="selected"
-        :x="x + 5"
-        :y="y + node.height + 22"
+        :x="x+node.width+20"
+        :y="y+30"
         class="button"
-        fill="#00b894"
+        fill="black"
+        font-size="0.8em"
         @click="editCandidate"
       >
         {{ labels.edit || "Edit" }}
       </text>
       <text
         v-if="selected"
-        :x="x + 5"
-        :y="y - 10"
+        :x="x+node.width+20"
+        :y="y+50"
         class="button"
-        fill="#00b894"
+        fill="black"
+        font-size="0.8em"
+        @click="editStyle"
+      >
+        {{ labels.style || "Style" }}
+      </text>
+      <text
+        v-if="selected"
+        :x="x+node.width+20"
+        :y="y+70"
+        class="button"
+        fill="black"
+        font-size="0.8em"
         stroke="none"
         @click="toggleSelect"
       >
@@ -26,30 +51,45 @@
       </text>
       <text
         v-if="selected"
-        :x="x + 100"
-        :y="y - 10"
+        :x="x+node.width+20"
+        :y="y+90"
         class="button"
-        fill="orange"
+        fill="black"
+        font-size="0.8em"
+        stroke="none"
         @click="copy"
       >
         {{ labels.copy || "Copy" }}
       </text>
       <text
         v-if="selected"
-        :x="x + 65"
-        :y="y + node.height + 22"
+        :x="x+node.width+20"
+        :y="y+110"
         class="button"
-        fill="#ff7675"
+        fill="black"
+        font-size="0.8em"
         @click="remove"
       >
         {{ labels.remove || "Remove" }}
       </text>
       <text
         v-if="createLinkMode && !selected"
-        :x="x + 5"
+        :x="x"
         :y="y - 10"
         class="button"
         fill="#ff7675"
+        font-size="0.8em"
+        @click="commitDest"
+      >
+        {{ labels.select || "Select" }}
+      </text>
+      <text
+        v-if="createLinkMode && selected"
+        :x="x"
+        :y="y - 10"
+        class="button"
+        fill="#ff7675"
+        font-size="0.8em"
         @click="commitDest"
       >
         {{ labels.select || "Select" }}
@@ -331,10 +371,26 @@ export default {
         height: this.node.height,
         content: this.content,
         stroke: this.node.stroke,
-        strokeWeight: this.node.strokeWeight
+        strokeWeight: this.node.strokeWeight,
+        attributes : this.node.attributes,
+        methods : this.node.methods
       });
     },
-
+    editStyle()
+      {
+        this.$emit("editStyleNode", {
+        id: this.id,
+        shape: this.node.shape,
+        width: this.node.width,
+        height: this.node.height,
+        content: this.content,
+        stroke: this.node.stroke,
+        strokeWeight: this.node.strokeWeight,
+        attributes : this.node.attributes,
+        methods : this.node.methods
+      });
+        
+      },
     // MINE
     calculateTotalHeight() {
       let nbAttribs = 0, nbMethods = 0;

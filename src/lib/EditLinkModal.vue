@@ -1,5 +1,5 @@
 <template>
-  <VModal :isActive="isActive" @clickModal="cancel">
+  <div v-if="isActive" @clickModal="cancel">
     <transition name="item">
       <div class="form" v-if="isActive">
         <h2>Edit link</h2>
@@ -40,7 +40,7 @@
         <VButton class="danger" @click="cancel">Cancel</VButton>
       </div>
     </transition>
-  </VModal>
+  </div>
 </template>
 <script type="text/javascript">
 

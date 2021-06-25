@@ -1,31 +1,29 @@
 <template>
-  <VModal :isActive="isActive" @clickModal="cancel">
+  <div v-if="isActive" @clickModal="cancel" style="margin-bottom:20px;" >
     <transition name="item">
       <div class="form" v-if="isActive">
-        <h2>General</h2>
-        <VInput v-model="newNode.content.text" placeholder="name" /><br />
-        <!--VInput v-model="newNode.content.url" placeholder="url" /><br /-->
+        <h2>Edit Class</h2>
+        <VInput v-model="newNode.content.text" placeholder="name" style="text-align:center" /><br />
 
 
-        <VSelect v-model="newNode.type" placeholder="Select type">
+        <VSelect v-model="newNode.type" placeholder="Class" >
           <option value="class" selected>Class</option>
           <option value="interface">Interface</option>
         </VSelect>
         <br/>
-
         <div class="attributes" style="margin-top: 20px">
-          <h2 style="display: inline; margin: 10px 10px 10px 0">Attributes</h2>
+          <h3 style="display: inline; margin: 10px 10px 10px 0">Attributes</h3>
           <VButton style="display: inline" @click="newAttribute">New</VButton>
-          <table v-if="attributeList.length > 0">
+          <table v-if="attributeList.length > 0" style="margin-top: 20px">
             <tr>
-              <th>UML Attribute</th>
+              <th>Attribute</th>
               <th>Type</th>
               <th>Actions</th>
             </tr>
             <tr v-for="a in attributeList" :key="a.name">
-              <td><input type="text" v-model="a.name"></td>
-              <td>
-                <VSelect v-model="a.type" placeholder="Select type">
+              <td style="width:30%;"><input type="text" v-model="a.name"  ></td>
+              <td style="width:40%; padding-left:10px;">
+                <VSelect v-model="a.type"   placeholder="Select type" style="width:100%;">
                   <option v-for="t in attributeTypes" :value="t" :key="t">{{ t }}</option>
                 </VSelect>
               </td>
@@ -33,82 +31,37 @@
             </tr>
           </table>
         </div>
-
+             
         <div class="methods" style="margin-top: 20px">
-          <h2 style="display: inline; margin: 10px 10px 10px 0">Methods</h2>
-          <VButton style="display: inline" @click="newMethod">New</VButton>
-          <table v-if="methodList.length > 0">
-            <tr>
-              <th>UML Method</th>
-              <th>Return type</th>
-              <th>Params</th>
-              <th>Actions</th>
-              <th>Add parameter</th>
-            </tr>
-            <tr v-for="a in methodList" :key="a.name">
-              <td><input type="text" v-model="a.name"></td>
-              <td>
-                <VSelect v-model="a.type" placeholder="Select type">
-                  <option v-for="t in attributeTypes" :value="t" :key="t">{{ t }}</option>
-                </VSelect>
-              </td>
-              <td width="180">
-                <span style="font-size: 15px" v-for="p in a.params" :key="p.name">{{ p.name }}: {{ p.type }}, </span>
-              </td>
-              <td>
-                <VButton @click="deleteMethod(a.name)">delete</VButton>
-                <!--VButton @click="toggleAddParam(a.name)">add param</VButton-->
-                <VButton @click="clearMethodParams(a.name)">clear params</VButton>
-              </td>
-              <!--td>
-                <div class="add-param" v-if="a.addParam">
-                  <input type="text" class="inline" style="width: 30%" v-model="tempParam.name" placeholder="Param name">
+          <h3 style="display: inline; margin: 10px 10px 30px 10px" >Methods</h3>
 
-                  <VSelect class="inline" v-model="tempParam.type" placeholder="Select type">
-                    <option v-for="t in attributeTypes" :value="t">{{ t }}</option>
-                  </VSelect>
-
-                  <VButton class="inline" @click="addMethodParam(a.name)">add param</VButton>
-                </div>
-              </td-->
-            </tr>
-          </table>
+          <VButton style="display: inline" @click="addMethod">New</VButton>
+ 
+           <div  v-for="a in methodList" :key="a.name" style="margin-top: 20px">
+                   <label>Method </label> 
+                   <input  type="text" v-model="a.name" style="width: 31%; margin-right:10px;" > <VButton @click="deleteMethod(a.name)">delete</VButton><br>
+                   <label>Return Type </label>
+                   <VSelect v-model="a.type" placeholder="Select return type" style="width: 50%;">
+                       <option v-for="t in attributeTypes" :value="t" :key="t">{{ t }}</option>
+                   </VSelect>
+                   <label v-if="a.params" > <br> Parameters </label><br>
+                   <i style="font-size: 15px, margin-top:10px;" v-for="p in a.params" :key="p.name">{{ p.name }}: {{ p.type }}  <VButton style="margin-top:10px;margin-left:10px;" @click="deleteParam(a.name,p.name)"> delete</VButton> <br> </i>  
+                   <input type="text" class="inline" style="width: 35%;margin-right:5px;" v-model="tempParam.name" placeholder="Param name">
+                   <VSelect class="inline" v-model="tempParam.type" placeholder="Select type">
+                        <option v-for="t in attributeTypes" :key="t" :value="t">{{ t }}</option>
+                    </VSelect>
+                    <VButton class="inline" @click="addMethodParam(a.name)">add Parameter</VButton>
+                   
+           </div>
         </div>
-
-        <div class="styling">
-          <h2>Styling</h2>
-          <VInput v-model="newNode.content.color" placeholder="color" /><br />
-          <VInput
-            type="number"
-            v-model="newNode.width"
-            placeholder="width"
-          /><br />
-          <VInput
-            type="number"
-            v-model="newNode.height"
-            placeholder="height"
-          /><br />
-          <VInput
-            type="text"
-            v-model="newNode.stroke"
-            placeholder="stroke"
-          /><br />
-          <VInput
-            type="number"
-            v-model="newNode.strokeWeight"
-            placeholder="stroke weight"
-          /><br />
-          <!--VSelect v-model="newNode.shape" placeholder="Select shape">
-            <option value="rectangle" selected>Rectangle</option>
-            <option value="ellipse">Ellipse</option> </VSelect
-          ><br /-->
+       <div  style="margin-top: 40px;">
+            <VButton @click="ok" style=" margin-right:10px;" >OK</VButton> 
+            <VButton class="danger" @click="cancel">Cancel</VButton>
         </div>
-
-        <VButton @click="ok">OK</VButton>
-        <VButton class="danger" @click="cancel">Cancel</VButton>
+        <p v-if="erreurNode" style="color:red;"> Vous devez saissir le nom de la classe !</p>
       </div>
     </transition>
-  </VModal>
+  </div>
 </template>
 
 <script lang="js">
@@ -121,6 +74,7 @@ export default {
   components: { VButton },
   props: {
     isActive: Boolean,
+    erreurNode : Boolean,
     node: {
       type: Object,
       default() {
@@ -133,12 +87,19 @@ export default {
           strokeWeight: 0,
           content: {
             text: "none",
-            url: "",
-            color: "#ecf0f1"
+            color: "#FFFFFF"
           },
           type: "class",
           attributes: Array,
-          methods: Array,
+                      default() {
+                        return [
+                        ]
+                      },
+          methods:Array,
+                default() {
+                  return [
+                  ]
+                },
         };
       }
     },
@@ -146,10 +107,6 @@ export default {
       type: Array,
       default() {
         return [
-          {
-            name: 'test',
-            type: 'String'
-          }
         ]
       }
     },
@@ -157,12 +114,6 @@ export default {
       type: Array,
       default() {
         return [
-          {
-            name: 'op1',
-            type: 'String',
-            params: [],
-            addParam: false
-          }
         ]
       }
     },
@@ -183,16 +134,16 @@ export default {
       this.newNode.attributes = this.attributeList;
     },
     methodList() {
-      this.newNode.methods = this.methodList;
+      this.newNode.methods =this.methodList;
     }
   },
   data() {
     return {
+      newMethod : false,
       newNode: this.node,
-
       tempParam: {
         name: '',
-        type: ''
+        type: 'String'
       }
     };
   },
@@ -212,12 +163,12 @@ export default {
       this.attributeList.push(new UMLAttribute("", "String"))
     },
     deleteAttribute(name) {
-      this.attributeList = this.attributeList.filter(a => a.name !== name)
+      this.attributeList = this.attributeList.filter(a => a.name !== name);
     },
 
     // Methods
-    newMethod() {
-      this.methodList.push(new UMLMethod("", "String", []))
+    addMethod() {
+      this.methodList.push(new UMLMethod("", "String", []));
     },
     clearMethodParams(name) {
       /* TODO take something else in consideration than the name (like the index),
@@ -225,14 +176,27 @@ export default {
       this.methodList.map(a => { if (a.name === name) a.params = [] })
     },
     addMethodParam(methodName) {
-      this.methodList.map(a => { if (a.name === methodName && this.tempParam.name && this.tempParam.type) a.params.push(this.tempParam) })
-    },
-    toggleAddParam(methodName) {
-      this.methodList.map(a => a.addParam = (a.name === methodName))
+      this.methodList.map(a => { if (a.name === methodName && this.tempParam.name && this.tempParam.type){
+           if(a.params){
+           a.params.push(this.tempParam);
+           }
+           else{
+               a.params = [];
+               a.params.push(this.tempParam);
+           }
+           this.tempParam = {
+                name: '',
+                type: 'tempParam'
+              };
+       };
+      })
     },
     deleteMethod(name) {
       this.methodList = this.methodList.filter(a => a.name !== name)
-    }
+    },
+    deleteParam(methodeName,paramName){
+      this.methodList.map(a => { if (a.name === methodeName) a.params = a.params.filter(b=> b.name !== paramName) });
+    },
   }
 };
 
@@ -259,4 +223,9 @@ export default {
   .inline {
     display: inline;
   }
+  h3{
+ color: gray;
+ font-size:20px;
+ }
+ 
 </style>
