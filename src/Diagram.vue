@@ -1,8 +1,8 @@
 <template>
   <div id="svg-diagram-show-area" class="scrollXY" ref="field">
     <svg
-      :width="fluid ? '100%' : width"
-      :height="fluid ? '100%' : height"
+      width='100%'
+      height='600px'
       :viewBox="viewBoxDiagram"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -56,6 +56,7 @@
           :rHeight="rect().rHeight"
           :scale="scale"
           @editNode="editNode"
+          @editStyleNode ="editStyleNode"
           @click="clickNode"
           @select="selectNode"
           @copy="copyNode"
@@ -82,6 +83,8 @@
           @updateLocation="updateLinkLocation"
           @remove="removeLink"
         />
+        
+        
       </g>
     </svg>
   </div>
@@ -164,7 +167,10 @@ export default {
   },
   methods: {
     editNode(item) {
-      this.$emit("editNode", item);
+      this.$emit("editNode", item); 
+    },
+    editStyleNode(item){
+      this.$emit("editStyleNode", item); 
     },
     editLink(item) {
       this.$emit("editLink", item);

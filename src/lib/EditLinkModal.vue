@@ -1,5 +1,5 @@
 <template>
-  <VModal :isActive="isActive" @clickModal="cancel">
+  <div v-if="isActive" @clickModal="cancel">
     <transition name="item">
       <div class="form" v-if="isActive">
         <h2>Edit link</h2>
@@ -16,21 +16,44 @@
           <option value="dash">Dash</option>
           <option value="dot">Dot</option> </VSelect
         ><br />
-        <label>Arrow type:</label>
-        <VSelect v-model="newLink.arrow" placeholder="Select arrow type">
-          <option value="none">none</option>
-          <option value="src">One side(source)</option>
-          <option value="dest">One side(destination)</option>
-          <option value="both">Both side</option> </VSelect
+           <label>Arrow type: </label>
+          <VSelect v-model="newLink.arrow" placeholder="Select arrow type">
+          <option value="association" selected>Association</option>
+          <option value="direct">Direct association</option>
+          <option value="Aggregation">Aggregation</option> 
+          <option value="Composition">Composition</option> 
+          <option value="Inheritance">Inheritance</option>    
+          </VSelect
         ><br />
+            <label>Left cardinality : </label>
+          <VInput v-model="newLink.cardinalityLeft" placeholder="Select left cardinality"  type="text" @input ="isCardinalityLeftValid">  
+          </VInput>
+             <span v-show="cardErrLeft" style="color:red">{{cardinalityError}}</span>
+          <br />
+           <label>Right cardinality : </label>
+          <VInput v-model="newLink.cardinalityRight" placeholder="Select right cardinality"  type="text" @input ="isCardinalityRightValid">
+           </VInput>
+           <span v-show="cardErrRight" style="color:red">{{cardinalityError}}</span>
+           <br/>
+
         <VButton @click="ok">OK</VButton>
         <VButton class="danger" @click="cancel">Cancel</VButton>
       </div>
     </transition>
-  </VModal>
+  </div>
 </template>
-<script>
+<script type="text/javascript">
+
+const cardinalityReg = /^(0|([1-9][0-9]*))..(([1-9][0-9]*)|"*")$/;
+
 export default {
+   data() {
+    return {
+      cardinalityError : " Cardinality must be : number..number (first number <= second number) or  number..*  ",
+      cardErrLeft:false,
+      cardErrRight:false
+    }
+  },
   props: {
     isActive: Boolean,
     link: {
@@ -39,10 +62,13 @@ export default {
         return {
           id: "0",
           content: {
-            color: "#ffeaa7",
+            color: "red",
             shape: "straight",
             pattern: "solid",
-            arrow: "none"
+            arrow: "association",
+            cardinalityLeft : "",
+            cardinalityRight : "",
+            navigability :"right",
           }
         };
       }
@@ -63,15 +89,36 @@ export default {
           color: this.newLink.color,
           shape: this.newLink.shape,
           pattern: this.newLink.pattern,
-          arrow: this.newLink.arrow
+          arrow: this.newLink.arrow,
+          cardinalityLeft : this.newLink.cardinalityLeft,
+          cardinalityRight : this.newLink.cardinalityRight,
         }
       });
     },
     cancel() {
       this.$emit("cancel");
-    }
+    },
+    isCardinalityLeftValid() {
+    let arrayCardLeft = this.newLink.cardinalityLeft.split("..");
+  	if (cardinalityReg.test(this.newLink.cardinalityLeft) && arrayCardLeft.length == 2 && (arrayCardLeft[1] != "*" && parseInt(arrayCardLeft[0]) <= parseInt(arrayCardLeft[1])) || arrayCardLeft[1] == "*"){
+          this.cardErrLeft = false;
+     } else {
+      this.cardErrLeft = true;
+      }
+  	},
+    isCardinalityRightValid() {
+    let arrayCardRight = this.newLink.cardinalityRight.split("..");
+  	if (cardinalityReg.test(this.newLink.cardinalityRight) && arrayCardRight.length == 2 && (arrayCardRight[1] != "*" && parseInt(arrayCardRight[0]) <= parseInt(arrayCardRight[1])) || arrayCardRight[1] == "*"){
+          this.cardErrRight = false;
+     } else {
+      this.cardErrRight = true;
+      }
+  	}
   }
 };
+
+
+
 </script>
 <style lang="scss" scoped>
 input {

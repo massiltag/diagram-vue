@@ -11,15 +11,12 @@
       stroke-width="3"
       fill="none"
       :stroke-dasharray="definePattern(link.pattern)"
-      :marker-start="
-        link.arrow === 'src' || link.arrow === 'both' ? `url(#${link.id})` : ''
-      "
       :marker-end="
-        link.arrow === 'dest' || link.arrow === 'both' ? `url(#${link.id})` : ''
+        link.arrow !== 'association'  ? `url(#${link.id})` : ''
       "
     />
     <line
-      v-else
+      v-if="calcSource().x !== calcDestination().x "
       :x1="calcSource().x"
       :y1="calcSource().y"
       :x2="calcDestination().x"
@@ -28,11 +25,44 @@
       stroke-width="3"
       fill="none"
       :stroke-dasharray="definePattern(link.pattern)"
-      :marker-start="
-        link.arrow === 'src' || link.arrow === 'both' ? `url(#${link.id})` : ''
-      "
       :marker-end="
-        link.arrow === 'dest' || link.arrow === 'both' ? `url(#${link.id})` : ''
+        link.arrow !== 'association'  ? `url(#${link.id})` : ''
+      "
+    />
+    <line
+      v-if="calcSource().x === calcDestination().x "
+      :x1="calcSource().x"
+      :y1="calcSource().y+10"
+      :x2="calcDestination().x -40"
+      :y2="calcDestination().y+10"
+      :stroke="link.color || '#ffeaa7'"
+      stroke-width="3"
+      fill="none"
+      :stroke-dasharray="definePattern(link.pattern)"
+    />
+     <line
+      v-if="calcSource().x === calcDestination().x "
+      :x1="calcDestination().x -40"
+      :y1="calcDestination().y+10"
+      :x2="calcDestination().x - 40"
+      :y2="calcDestination().y+35"
+      :stroke="link.color || '#ffeaa7'"
+      stroke-width="3"
+      fill="none"
+      :stroke-dasharray="definePattern(link.pattern)"
+    />
+     <line
+      v-if="calcSource().x === calcDestination().x "
+      :x1="calcDestination().x - 40"
+      :y1="calcDestination().y+35"
+      :x2="calcDestination().x "
+      :y2="calcDestination().y+35"
+      :stroke="link.color || '#ffeaa7'"
+      stroke-width="3"
+      fill="none"
+      :stroke-dasharray="definePattern(link.pattern)"
+      :marker-end="
+        link.arrow !== 'association'  ? `url(#${link.id})` : ''
       "
     />
     <marker
@@ -43,10 +73,11 @@
       markerHeight="15"
       viewBox="0 0 10 10"
       refX="5"
-      refY="5"
-    >
-      <polygon points="0,1.5 0,8.5 10,5 " :fill="link.color || '#ffeaa7'" />
-    </marker>
+      refY="5" >
+      <polygon v-if ="link.arrow !== 'Composition' && link.arrow != 'Aggregation'" points="0,1.5 0,8.5 10,5 " :fill="link.arrow === 'Inheritance'? '#eeeeee' : (link.color || '#ffeaa7')" :stroke = "link.color || '#ffeaa7'" />
+      <polygon  v-if ="link.arrow === 'Composition'"  points="6,9 1,6 5,2 9,5 " :stroke="link.color || '#ffeaa7'" :fill="link.color || '#ffeaa7'" stroke-width="1"/> 
+      <polygon  v-if ="link.arrow === 'Aggregation'"  points="6,9 1,6 5,2 9,5 " :stroke="link.color || '#ffeaa7'" :fill="'#eeeeee'" stroke-width="1"/> 
+      </marker>
     <g v-if="editable">
       <line
         :x1="calcSource().x"
@@ -85,6 +116,7 @@
         :x="point.x - 15"
         :y="point.y - 20"
         fill="#00b894"
+        font-size="0.8em"
         @click="edit"
         v-if="selected"
         class="button"
@@ -95,11 +127,44 @@
         :x="point.x - 15"
         :y="point.y + 30"
         fill="#ff7675"
+        font-size="0.8em"
         @click="remove"
         v-if="selected"
         class="button"
       >
         {{ labels.remove || "Remove" }}
+      </text>
+      <text
+        v-if ="link.cardinalityLeft && link.cardinalityLeft!= null && calcSource().x !== calcDestination().x"
+        :x="calcSource().x-calculXPoS()"
+        :y="calcSource().y+calculYPoS()"
+        fill="black"
+      >
+      {{ link.cardinalityLeft }}
+      </text>
+      <text
+        v-if ="link.cardinalityRight && link.cardinalityRight!= null && calcSource().x !== calcDestination().x"
+        :x="calcDestination().x-calculXPoD()"
+        :y="calcDestination().y-calculYPoD()"
+        fill="black"
+      >
+      {{ link.cardinalityRight }}
+      </text>
+     <text
+        v-if ="link.cardinalityLeft && link.cardinalityLeft!= null && calcSource().x === calcDestination().x"
+        :x="calcSource().x-30"
+        :y="calcSource().y+30"
+        fill="black"
+      >
+      {{ link.cardinalityLeft }}
+      </text>
+      <text
+        v-if ="link.cardinalityRight && link.cardinalityRight!= null && calcSource().x === calcDestination().x"
+        :x="calcSource().x-30"
+        :y="calcSource().y + 60"
+        fill="black"
+      >
+      {{ link.cardinalityRight }}
       </text>
     </g>
   </g>
@@ -157,8 +222,9 @@ export default {
         x: 0,
         y: 0
       },
+      po:0,
       id: this.link.id,
-      point: this.link.point
+      point: this.link.point,
     };
   },
   methods: {
@@ -286,6 +352,18 @@ export default {
           };
         }
       }
+    },
+    calculXPoD(){
+     return this.calcSource().x < this.calcDestination().x ? 30 : 0;
+    },
+    calculXPoS(){
+     return this.calcSource().x > this.calcDestination().x ? 30 : 0;
+    },
+    calculYPoD(){
+     return this.calcSource().y > this.calcDestination().y ? 30 : 0;
+    },
+    calculYPoS(){
+     return this.calcSource().y < this.calcDestination().y ? 30 :0;
     }
   }
 };

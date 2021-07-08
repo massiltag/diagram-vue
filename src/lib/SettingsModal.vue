@@ -1,11 +1,6 @@
 <template>
-  <VModal :isActive="isActive" @clickModal="cancel">
+  <div v-if="isActive" @clickModal="cancel">
     <h2>Settings</h2>
-    <h3>Field Size</h3>
-    <label>Width</label>
-    <VInput type="number" v-model="newSettings.width" />
-    <label>Height</label>
-    <VInput type="number" v-model="newSettings.height" /><br />
     <h3>Scale</h3>
     <VSelect v-model="newSettings.scale">
       <option value="0.5">Small</option>
@@ -18,7 +13,7 @@
     <VCkbox v-model="newSettings.showGrid"> Show grid </VCkbox><br /><br />
     <VButton @click="ok">OK</VButton>
     <VButton class="danger" @click="cancel">Cancel</VButton>
-  </VModal>
+  </div>
 </template>
 <script>
 export default {
